@@ -1,0 +1,220 @@
+/* Kairo — generated from tokens.json */
+:root, [data-theme="dark"] {
+  --bg: #0a0a0a; /* Page background: black (#0A0A0A) in the default dark theme, Off White in light. */
+  --surface: #141414; /* Cards, sheets, nav rail (Card / White). */
+  --surface-2: #1c1c1c; /* Wells, stat tiles, day columns, segmented track. Kept light enough that Slate muted text still holds 4.5:1 on it. */
+  --surface-3: #2a2a2a; /* Empty meter tracks, planned bars, pressed fills (Light Slate). */
+  --line: #262626; /* Hairline borders and dividers (Border / Light Slate). Decorative only. */
+  --line-strong: #676767; /* Control borders, planned rings, missed dashed outlines — 3:1 on surface, bg and surface-2. */
+  --ink: #f8fafc; /* Primary text and all numerals (Text / Charcoal). */
+  --ink-2: #a3a3a3; /* Muted text: labels, metadata (Slate in light; neutral grey on black). 4.5:1 on bg, surface, surface-2. */
+  --ink-3: #8a8a8a; /* Captions and axis labels; same as Slate in light. */
+  --brand: #262626; /* Primary / Black: the race card, active nav item, the done state of the toggle, chart "completed" bars, brand mark. On the black dark theme it lifts to a charcoal so it still reads as a surface. */
+  --on-brand: #f8fafc; /* Text and icons on brand fills. */
+  --data-strong: #e5e5e5; /* Completed volume in charts and meters (black in light, near-white on the black theme so it stays the strongest mark). */
+  --today-ring: #b8f23a; /* Border of today in every calendar: black in light, lime in dark. */
+  --on-brand-2: #a3a3a3; /* Secondary text on brand fills (race card labels). */
+  --accent: #b8f23a; /* Primary Accent / Electric Lime: Mark-as-done, primary buttons, today, current week, race progress. A FILL only — never text on light grounds (1.3:1 on white). */
+  --on-accent: #0a0a0a; /* Text and icons on lime (black). */
+  --accent-ink: #b8f23a; /* Lime-family text on light grounds (darkened to hold 4.5:1); plain lime in dark. */
+  --accent-soft: #1c2410; /* Today wash in calendars, rail race chip. Text on it is ink or accent-ink. */
+  --secondary: #38bdf8; /* Secondary Accent / Sky Blue: links, trend lines, info. Fill or mark only on light grounds. */
+  --secondary-ink: #38bdf8; /* Sky-family text and 2px lines on light grounds. */
+  --recovery: #a78bfa; /* Recovery (Lavender): recovery screen accents, sleep/HRV bars, the recovery nav glyph. */
+  --recovery-ink: #a78bfa; /* Lavender-family text/icons on light grounds. */
+  --recovery-soft: #1f1a2e; /* Recovery icon tile ground. */
+  --status-good: #22c55e; /* Success / Completed (Emerald): done marks, ready-to-train, on-track deltas. Fill/mark; carries a black icon (on-status). */
+  --status-good-ink: #22c55e; /* good text on light grounds. */
+  --status-caution: #f59e0b; /* Warning / Hard session (Amber): train-easy verdict, close-to-long-run warnings. Fill/mark; carries a black icon (on-status). */
+  --status-caution-ink: #f59e0b; /* caution text on light grounds. */
+  --status-alert: #ef4444; /* Back-off and stop advice. Same red as Intervals; always with icon + word. Fill/mark; carries a black icon (on-status). */
+  --status-alert-ink: #ef4444; /* alert text on light grounds. */
+  --on-status: #0a0a0a; /* Icons and checks on status fills (black holds 3:1+ on emerald, amber and red). */
+  --focus: #b8f23a; /* Focus ring, 2px solid, 2px offset. */
+  --wt-recovery: #22c55e; /* Recovery runs and easy/recovery sessions (given: Easy / Recovery). The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-recovery-ink: #22c55e; /* recovery: glyph and label colour on surface, surface-2 and wt-recovery-soft (darkened from the given hex to 4.5:1). */
+  --wt-recovery-soft: #173723; /* recovery: chip / calendar block ground. */
+  --wt-easy: #38bdf8; /* Easy runs (given: Easy Run). The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-easy-ink: #38bdf8; /* easy: glyph and label colour on surface, surface-2 and wt-easy-soft (darkened from the given hex to 4.5:1). */
+  --wt-easy-soft: #1b3642; /* easy: chip / calendar block ground. */
+  --wt-long: #8b5cf6; /* Long runs (given: Long Run). The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-long-ink: #9e76f7; /* long: glyph and label colour on surface, surface-2 and wt-long-soft (darkened from the given hex to 4.5:1). */
+  --wt-long-soft: #2c2241; /* long: chip / calendar block ground. */
+  --wt-threshold: #f59e0b; /* Tempo / threshold (given: Tempo / Threshold). The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-threshold-ink: #f59e0b; /* threshold: glyph and label colour on surface, surface-2 and wt-threshold-soft (darkened from the given hex to 4.5:1). */
+  --wt-threshold-soft: #413012; /* threshold: chip / calendar block ground. */
+  --wt-interval: #ef4444; /* Intervals, VO2 and time trials (given: Intervals / Hard). The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-interval-ink: #f15c5c; /* interval: glyph and label colour on surface, surface-2 and wt-interval-soft (darkened from the given hex to 4.5:1). */
+  --wt-interval-soft: #401e1e; /* interval: chip / calendar block ground. */
+  --wt-strength: #eab308; /* Strength sessions (given: Strength). The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-strength-ink: #eab308; /* strength: glyph and label colour on surface, surface-2 and wt-strength-soft (darkened from the given hex to 4.5:1). */
+  --wt-strength-soft: #3f3412; /* strength: chip / calendar block ground. */
+  --wt-plyo: #ec4899; /* Plyometrics and drills (given: Plyometrics). The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-plyo-ink: #ee57a1; /* plyo: glyph and label colour on surface, surface-2 and wt-plyo-soft (darkened from the given hex to 4.5:1). */
+  --wt-plyo-soft: #3f1e2f; /* plyo: chip / calendar block ground. */
+  --wt-rest: #cbd5e1; /* Rest and mobility days (given: Rest). The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-rest-ink: #cbd5e1; /* rest: glyph and label colour on surface, surface-2 and wt-rest-soft (darkened from the given hex to 4.5:1). */
+  --wt-rest-soft: #393b3d; /* rest: chip / calendar block ground. */
+  --wt-mp: #14b8a6; /* Marathon-pace work. ADDED: the palette names no colour for MP; teal sits between sky and emerald without repeating either. The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-mp-ink: #14b8a6; /* mp: glyph and label colour on surface, surface-2 and wt-mp-soft (darkened from the given hex to 4.5:1). */
+  --wt-mp-soft: #143531; /* mp: chip / calendar block ground. */
+  --wt-cross: #64748b; /* Cross-training (Taekwondo). ADDED: uses the palette Slate so it never competes with running. The given hex, used as FILL: volume bars, week bar segments, solid tiles, dots. */
+  --wt-cross-ink: #818ea1; /* cross: glyph and label colour on surface, surface-2 and wt-cross-soft (darkened from the given hex to 4.5:1). */
+  --wt-cross-soft: #24272c; /* cross: chip / calendar block ground. */
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.5); /* Resting cards on bg. */
+  --shadow-raised: 0 8px 32px rgba(0,0,0,0.6); /* Sheets, toasts, the raised Workouts nav button. */
+}
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f7f9fc;
+  --surface-3: #e2e8f0;
+  --line: #e2e8f0;
+  --line-strong: #8491a4;
+  --ink: #111827;
+  --ink-2: #64748b;
+  --ink-3: #64748b;
+  --brand: #0a0a0a;
+  --on-brand: #ffffff;
+  --data-strong: #0a0a0a;
+  --today-ring: #0a0a0a;
+  --on-brand-2: #a3a3a3;
+  --accent: #b8f23a;
+  --on-accent: #0a0a0a;
+  --accent-ink: #5e7b1e;
+  --accent-soft: #f2fbdf;
+  --secondary: #38bdf8;
+  --secondary-ink: #247ba1;
+  --recovery: #a78bfa;
+  --recovery-ink: #7561af;
+  --recovery-soft: #f3effe;
+  --status-good: #22c55e;
+  --status-good-ink: #17843f;
+  --status-caution: #f59e0b;
+  --status-caution-ink: #9f6707;
+  --status-alert: #ef4444;
+  --status-alert-ink: #d03b3b;
+  --on-status: #0a0a0a;
+  --focus: #0a0a0a;
+  --wt-recovery: #22c55e;
+  --wt-recovery-ink: #167e3c;
+  --wt-recovery-soft: #e0f7e8;
+  --wt-easy: #38bdf8;
+  --wt-easy-ink: #23779c;
+  --wt-easy-soft: #e3f6fe;
+  --wt-long: #8b5cf6;
+  --wt-long-ink: #784fd4;
+  --wt-long-soft: #efe8fe;
+  --wt-threshold: #f59e0b;
+  --wt-threshold-ink: #986207;
+  --wt-threshold-soft: #fef1dd;
+  --wt-interval: #ef4444;
+  --wt-interval-ink: #bf3636;
+  --wt-interval-soft: #fde5e5;
+  --wt-strength: #eab308;
+  --wt-strength-ink: #8c6b05;
+  --wt-strength-soft: #fcf4dc;
+  --wt-plyo: #ec4899;
+  --wt-plyo-ink: #b83877;
+  --wt-plyo-soft: #fce5f1;
+  --wt-rest: #cbd5e1;
+  --wt-rest-ink: #6e737a;
+  --wt-rest-soft: #f8f9fb;
+  --wt-mp: #14b8a6;
+  --wt-mp-ink: #0d7b6f;
+  --wt-mp-soft: #def5f3;
+  --wt-cross: #64748b;
+  --wt-cross-ink: #5d6c81;
+  --wt-cross-soft: #e9ecef;
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.05);
+  --shadow-raised: 0 8px 32px rgba(0,0,0,0.16);
+}
+:root {
+  --space-1: 4px; /* Icon-to-text gap, chip inner padding. */
+  --space-2: 8px; /* Gap inside a calendar cell, between stacked sessions. */
+  --space-3: 12px; /* Grid gap between day columns. */
+  --space-4: 16px; /* Card padding (mobile), mobile side gutter. */
+  --space-5: 20px; /* Card padding (desktop). */
+  --space-6: 24px; /* Gap between cards. */
+  --space-8: 32px; /* Section spacing, desktop main padding. */
+  --space-12: 48px; /* Hero breathing room (race countdown). */
+  --radius-sm: 8px; /* Chips, inputs, small buttons, session blocks inside a day. */
+  --radius-md: 12px; /* Day columns, stat tiles, list rows. */
+  --radius-lg: 18px; /* Cards. */
+  --radius-xl: 26px; /* Hero cards: Today's workout, race countdown, mobile sheets. */
+  --radius-pill: 999px; /* Primary buttons, segmented control, status pills. */
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --text-display-xl: 800 64px/0.95 var(--font-display); /* Race countdown number only. */
+  --text-display-l: 750 40px/1 var(--font-display); /* Today's workout title, screen hero. */
+  --text-metric-xl: 700 44px/1 var(--font-display); /* Readiness score and hero numbers (today's km, rest timer). Tabular figures. */
+  --text-metric-m: 700 22px/1.1 var(--font-display); /* Stat tiles and card metrics. Tabular figures. */
+  --text-title-l: 600 24px/30px var(--font-sans); /* Screen titles. */
+  --text-title-m: 600 17px/24px var(--font-sans); /* Card titles. */
+  --text-body: 400 15px/22px var(--font-sans); /* Default copy. */
+  --text-body-s: 400 13px/18px var(--font-sans); /* Metadata, calendar cell detail. */
+  --text-label: 650 11px/14px var(--font-sans); /* Uppercase eyebrows and day names. Always ink-2 or ink-3. */
+}
+.display-xl {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 0.95;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.display-l {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 750;
+  letter-spacing: -0.015em;
+}
+.metric-xl {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.metric-m {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.title-l {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.title-m {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.body-s {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+}
