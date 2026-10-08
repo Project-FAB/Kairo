@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Icon, WorkoutIcon } from '../components/icons.jsx';
 import { Button, Card, Segmented, Meter, ExerciseRow, DoneToggle, StatusMark, cx } from '../components/ui.jsx';
-import { ScreenHead, Empty } from '../components/common.jsx';
+import { ScreenHead, Empty, SessionActions } from '../components/common.jsx';
 import { useKairo } from '../state/AppState.jsx';
 import { useShell } from '../components/Shell.jsx';
 import { STRENGTH, PLYO, plyoFor } from '../lib/plan.js';
-import { daysBetween, fmtDate, fmtClock, dow } from '../lib/dates.js';
+import { daysBetween, fmtDate, fmtClock, dow, parseISO } from '../lib/dates.js';
 
 /** The session to show: ?session=id, else today's, else the next upcoming one matching `match`. */
 function pickSession(sessions, today, id, match) {
@@ -27,7 +27,8 @@ export default function Strength() {
   const { back } = useShell();
   const [params, setParams] = useSearchParams();
   const fromId = params.get('session');
-  const initial = useMemo(() => pickSession(sessions, today, fromId, (s) => s.type === 'upper' || s.type === 'strength'), [fromId, sessions.length]);
+  const pickedId = useMemo(() => pickSession(sessions, today, fromId, (s) => s.type === 'upper' || s.type === 'strength')?.id, [fromId, sessions.length]);
+  const initial = sessions.find((s) => s.id === pickedId) || null; // fresh copy so moves/status changes show
   const [k, setK] = useState(initial?.session || 'A');
   useEffect(() => { if (initial?.session) setK(initial.session); }, [initial?.id]);
   const target = initial && initial.session === k ? initial : pickSession(sessions, today, null, (s) => s.session === k);
@@ -67,7 +68,7 @@ export default function Strength() {
             </Card>
           </div>
           <aside className="k-detail-side">
-            <DoneToggle done={status[target.id] === 'done'} onChange={(v) => actions.toggleDone(target, v)} label={['Mark session as done', 'Session done · tap to undo']} />
+            <SessionActions s={target} toggle={<DoneToggle done={status[target.id] === 'done'} onChange={(v) => actions.toggleDone(target, v)} label={['Mark session as done', 'Session done · tap to undo']} />} />
             <Card eyebrow="Rest timer" title={rest > 0 ? 'Recovering' : 'Ready for next set'}>
               <div className="k-rest"><span className="metric-xl k-num">{fmtClock(Math.max(0, rest))}</span><Button variant="ghost" size="sm" onClick={() => setRest(0)}>Skip</Button></div>
             </Card>
@@ -88,7 +89,7 @@ export function Plyo() {
   const fromId = params.get('session');
   const target = pickSession(sessions, today, fromId, (s) => s.type === 'plyo');
   if (!target) return <div className="k-screen"><ScreenHead title="Plyometrics" /><Empty icon="plyo" title="No plyometric sessions left in the plan" /></div>;
-  const short = dow(target.date) !== 1; // Tuesday = full session
+  const short = dow(target.row?.original_date ? parseISO(target.row.original_date) : target.date) !== 1; // planned on Tuesday = full session, even if moved
   const prog = plyoFor(target.week, short);
   const isDone = (ex) => (strengthLogs.find((l) => l.session_id === target.id && l.exercise === ex)?.sets_done || 0) > 0;
   const contacts = prog.ex.reduce((a, e) => a + (isDone(e[0]) ? e[2] : 0), 0);
@@ -116,7 +117,7 @@ export function Plyo() {
           </Card>
         </div>
         <aside className="k-detail-side">
-          <DoneToggle done={status[target.id] === 'done'} onChange={(v) => actions.toggleDone(target, v)} label={['Mark plyos as done', 'Plyos done · tap to undo']} />
+          <SessionActions s={target} toggle={<DoneToggle done={status[target.id] === 'done'} onChange={(v) => actions.toggleDone(target, v)} label={['Mark plyos as done', 'Plyos done · tap to undo']} />} />
           <Card eyebrow="Progression" title="Contacts per session">
             <div className="k-prog">
               {[['1–3', 70, [1, 3]], ['4–6', 95, [4, 6]], ['7–11', 120, [7, 11]], ['12–18', 80, [12, 18]], ['19–20', 35, [19, 20]], ['21', 0, [21, 21]]].map(([w, c, r]) => (

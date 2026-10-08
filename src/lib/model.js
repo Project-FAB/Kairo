@@ -37,7 +37,12 @@ export function buildWeeks(sessions, planStartISO) {
   return weeks;
 }
 
-export const statusMap = (sessions) => Object.fromEntries(sessions.filter((s) => s.status !== 'planned').map((s) => [s.id, s.status]));
+export function findSession(weeks, id) {
+  for (const w of weeks) for (let i = 0; i < 7; i++) { const s = w.days[i].sessions.find((x) => x.id === id); if (s) return { s, week: w, dayIdx: i }; }
+  return null;
+}
+
+export const statusMap =(sessions) => Object.fromEntries(sessions.filter((s) => s.status !== 'planned').map((s) => [s.id, s.status]));
 
 export const currentWeekOf = (today, planStartISO) => Math.max(0, Math.min(LAST_WEEK, Math.floor(daysBetween(parseISO(planStartISO), today) / 7)));
 

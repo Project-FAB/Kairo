@@ -64,7 +64,7 @@ export default function Dashboard() {
         <p className="body k-muted">{daysBetween(today, weeks[0].start) > 0 ? `Your baseline week starts ${fmtDate(weeks[0].start)}.` : 'Tokyo is done. Recover, then plan the next one.'}</p>
       </section>
     );
-  const weekCal = <WeekCalendar week={weeks[weekNo]} status={status} onOpen={openSession} onToggle={actions.toggleDone} compact={layout === 'mobile'} onPrev={() => setWeekNo(weekNo - 1)} onNext={() => setWeekNo(weekNo + 1)} onJumpToday={() => setWeekNo(currentWeek)} />;
+  const weekCal = <WeekCalendar week={weeks[weekNo]} status={status} onOpen={openSession} onToggle={actions.toggleDone} onMove={actions.move} compact={layout === 'mobile'} onPrev={() => setWeekNo(weekNo - 1)} onNext={() => setWeekNo(weekNo + 1)} onJumpToday={() => setWeekNo(currentWeek)} />;
   const longRun = week.days[6].sessions.find((s) => s.type === 'long' || s.type === 'race');
   const mileage = (
     <Card title="Weekly mileage" eyebrow="Volume" action={<Button variant="ghost" size="sm" iconRight="chevR" onClick={() => go('/progress')}>Analytics</Button>}>

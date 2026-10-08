@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { Icon, WorkoutIcon, TYPE_TONE } from '../components/icons.jsx';
-import { Button, TypeTag, IntensityMeter, Card, FuelingCard, Sheet, DoneToggle, cx } from '../components/ui.jsx';
-import { ScreenHead, Field, Empty } from '../components/common.jsx';
+import { TypeTag, IntensityMeter, Card, FuelingCard, DoneToggle, cx } from '../components/ui.jsx';
+import { ScreenHead, Field, Empty, SessionActions } from '../components/common.jsx';
 import { useKairo } from '../state/AppState.jsx';
 import { useShell } from '../components/Shell.jsx';
-import { DAY_NAMES, fmtDate, sameDay, daysBetween, secToPace } from '../lib/dates.js';
-import { sessionState } from '../lib/model.js';
-
-function findSession(weeks, id) {
-  for (const w of weeks) for (let i = 0; i < 7; i++) { const s = w.days[i].sessions.find((x) => x.id === id); if (s) return { s, week: w, dayIdx: i }; }
-  return null;
-}
+import { fmtDate, sameDay, daysBetween, secToPace } from '../lib/dates.js';
+import { sessionState, findSession } from '../lib/model.js';
 
 /** /workouts → today's main session (or the next one) */
 export function TodayWorkout() {
@@ -52,7 +47,6 @@ function WorkoutDetail({ id, todayTabs }) {
   const { weeks, status, today, actions } = useKairo();
   const { layout, back, openSession } = useShell();
   const found = findSession(weeks, id);
-  const [sheet, setSheet] = useState(false);
   const [note, setNote] = useState(found?.s.notes || '');
   useEffect(() => setNote(found?.s.notes || ''), [id, found?.s.notes]);
   if (!found) return <div className="k-screen"><ScreenHead back="Back" onBack={back} title="Workout not found" /><Empty title="This session isn't in your plan anymore." /></div>;
@@ -132,13 +126,7 @@ function WorkoutDetail({ id, todayTabs }) {
               <p className="body-s k-muted k-heat"><Icon name="sun" size={14} /> Manila heat: expect 15–45 s/km slower at the same effort.</p>
             </Card>
           ) : null}
-          {!s.synthetic ? (
-            <div className="k-actions">
-              {!isRest && layout !== 'mobile' ? toggle : null}
-              <Button variant="secondary" icon="move" onClick={() => setSheet(true)}>Reschedule</Button>
-              {!isRest ? <Button variant="ghost" icon="skip" onClick={() => actions.skip(s, st !== 'skipped')}>{st === 'skipped' ? 'Restore' : 'Skip workout'}</Button> : null}
-            </div>
-          ) : null}
+          {!s.synthetic ? <SessionActions s={s} toggle={!isRest && layout !== 'mobile' ? toggle : null} /> : null}
           <Card eyebrow="If something's off" title="Adjust, don't force">
             <ul className="k-list body-s">
               <li>Shin 3+/10 or rising → stop, cross-train next 1–2 runs.</li>
@@ -148,21 +136,6 @@ function WorkoutDetail({ id, todayTabs }) {
           </Card>
         </aside>
       </div>
-      {sheet ? (
-        <Sheet title="Move to another day" onClose={() => setSheet(false)}>
-          <p className="body-s k-muted">Keep 48 h between hard leg days and the long run.</p>
-          <div className="k-movelist">
-            {week.days.map((d, i) => (
-              <button key={i} className={cx('k-moverow', i === dayIdx && 'is-current')} disabled={i === dayIdx} onClick={() => { actions.move(s, d.date); setSheet(false); }}>
-                <span className="k-keyrow-date"><span className="label">{DAY_NAMES[i]}</span><b className="k-num">{d.date.getDate()}</b></span>
-                <span className="k-move-icons">{d.sessions.map((x) => <span key={x.id} className={`k-tone-${TYPE_TONE[x.type]}`}><Icon name={x.type} size={16} stroke={2} /></span>)}</span>
-                <span className="body-s k-muted">{d.sessions.map((x) => x.title).join(' + ')}</span>
-                {(i === 5 || i === 4) && s.intensity >= 4 ? <span className="k-warn body-s"><Icon name="info" size={14} />Close to long run</span> : null}
-              </button>
-            ))}
-          </div>
-        </Sheet>
-      ) : null}
     </div>
   );
 }

@@ -1,8 +1,10 @@
-import React from 'react';
-import { Icon, WorkoutIcon } from './icons.jsx';
+import React, { useState } from 'react';
+import { Icon, WorkoutIcon, TYPE_TONE } from './icons.jsx';
+import { Button, Sheet, cx } from './ui.jsx';
 import { useKairo } from '../state/AppState.jsx';
 import { useShell } from './Shell.jsx';
 import { DAY_NAMES, daysBetween, dow } from '../lib/dates.js';
+import { findSession, sessionState } from '../lib/model.js';
 
 export function ScreenHead({ eyebrow, title, sub, actions, back, onBack }) {
   return (
@@ -48,6 +50,41 @@ export function KeyWorkouts({ n = 4 }) {
         </button>
       ))}
     </div>
+  );
+}
+
+/** Done toggle + Reschedule + Skip for any real session, with the "move to another day" sheet. */
+export function SessionActions({ s, toggle, hint = 'Keep 48 h between hard leg days and the long run.' }) {
+  const { weeks, status, today, actions } = useKairo();
+  const [sheet, setSheet] = useState(false);
+  const found = s && !s.synthetic ? findSession(weeks, s.id) : null;
+  if (!found) return toggle || null;
+  const { week, dayIdx } = found;
+  const st = sessionState(s, today, status);
+  const isRest = s.kind === 'rest';
+  return (
+    <>
+      <div className="k-actions">
+        {toggle}
+        <Button variant="secondary" icon="move" onClick={() => setSheet(true)}>Reschedule</Button>
+        {!isRest ? <Button variant="ghost" icon="skip" onClick={() => actions.skip(s, st !== 'skipped')}>{st === 'skipped' ? 'Restore' : 'Skip workout'}</Button> : null}
+      </div>
+      {sheet ? (
+        <Sheet title="Move to another day" onClose={() => setSheet(false)}>
+          <p className="body-s k-muted">{hint} Tip: you can also drag sessions between days in the calendar.</p>
+          <div className="k-movelist">
+            {week.days.map((d, i) => (
+              <button key={i} className={cx('k-moverow', i === dayIdx && 'is-current')} disabled={i === dayIdx} onClick={() => { actions.move(s, d.date); setSheet(false); }}>
+                <span className="k-keyrow-date"><span className="label">{DAY_NAMES[i]}</span><b className="k-num">{d.date.getDate()}</b></span>
+                <span className="k-move-icons">{d.sessions.map((x) => <span key={x.id} className={`k-tone-${TYPE_TONE[x.type]}`}><Icon name={x.type} size={16} stroke={2} /></span>)}</span>
+                <span className="body-s k-muted">{d.sessions.map((x) => x.title).join(' + ')}</span>
+                {(i === 5 || i === 4) && s.intensity >= 4 ? <span className="k-warn body-s"><Icon name="info" size={14} />Close to long run</span> : null}
+              </button>
+            ))}
+          </div>
+        </Sheet>
+      ) : null}
+    </>
   );
 }
 

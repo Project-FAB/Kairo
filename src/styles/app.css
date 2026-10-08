@@ -250,6 +250,15 @@ button { font: inherit; color: inherit; }
 .k-cday.is-today .k-cday-date { background: var(--accent); color: var(--on-accent); padding: 0 6px; border-radius: var(--radius-pill); }
 .k-cday.is-selected { box-shadow: 0 0 0 2px var(--ink); }
 .k-cweek-detail { display: flex; flex-direction: column; gap: var(--space-2); }
+/* drag a session to another day */
+[data-draggable] { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.k-week.is-dragging, .k-week.is-dragging * { cursor: grabbing !important; }
+.k-week.is-dragging .k-block:hover { box-shadow: none; }
+.is-drag-src { opacity: .35; }
+.k-day.is-drop-over, .k-cday.is-drop-over { border: 1.5px dashed var(--ink); background: var(--accent-soft); }
+.k-drag-ghost { position: fixed; z-index: 40; transform: translate(-50%, calc(-100% - 14px)); display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line-strong); box-shadow: var(--shadow-raised); pointer-events: none; white-space: nowrap; }
+.k-drag-ghost-title { display: flex; align-items: center; gap: 6px; font-weight: 650; font-size: 13px; color: var(--ink); }
+.k-drag-ghost-title .k-icon { color: var(--t); }
 
 /* ---------- month ---------- */
 .k-month { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); box-shadow: var(--shadow-card); }

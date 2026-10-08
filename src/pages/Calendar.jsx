@@ -50,7 +50,7 @@ export default function Calendar() {
       <ScreenHead eyebrow="Plan your training" title="Calendar" actions={<Segmented options={['Week', 'Month', 'Block', 'Race']} value={view} onChange={setView} />} />
       {view === 'Week' ? (
         <>
-          <WeekCalendar week={week} status={status} onOpen={openSession} onToggle={actions.toggleDone} compact={mobile} onPrev={() => setWeekNo(weekNo - 1)} onNext={() => setWeekNo(weekNo + 1)} onJumpToday={() => setWeekNo(currentWeek)} />
+          <WeekCalendar week={week} status={status} onOpen={openSession} onToggle={actions.toggleDone} onMove={actions.move} compact={mobile} onPrev={() => setWeekNo(weekNo - 1)} onNext={() => setWeekNo(weekNo + 1)} onJumpToday={() => setWeekNo(currentWeek)} />
           {!mobile ? <CalendarLegend /> : null}
           <WeekFocus week={week} />
         </>

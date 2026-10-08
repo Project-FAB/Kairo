@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Icon, WorkoutIcon, TYPE_TONE } from './icons.jsx';
 import { DAY_NAMES, MONTHS, MONTHS_LONG, sameDay, daysBetween, fmtDate, fmtMin } from '../lib/dates.js';
 import { typeMeta, PHASES, LAST_WEEK } from '../lib/plan.js';
@@ -146,9 +146,9 @@ export function MarkToggle({ s, status, onToggle, size = 18 }) {
 }
 
 // ---------- Today's workout ----------
-export function SessionLine({ s, status, onClick, onToggle }) {
+export function SessionLine({ s, status, onClick, onToggle, className, ...rest }) {
   return (
-    <div role="button" tabIndex={0} className={cx('k-sline', status && `is-${status}`)} onClick={onClick} onKeyDown={(e) => { if (e.key === 'Enter') onClick && onClick(); }}>
+    <div {...rest} role="button" tabIndex={0} className={cx('k-sline', status && `is-${status}`, className)} onClick={onClick} onKeyDown={(e) => { if (e.key === 'Enter') onClick && onClick(); }}>
       <WorkoutIcon type={s.type} size={32} />
       <span className="k-sline-main"><span className="k-sline-title">{s.title}</span><span className="body-s k-muted">{s.detail}{s.dur ? ` · ${s.dur}` : ''}</span></span>
       {s.kind === 'rest' ? null : <MarkToggle s={s} status={status} onToggle={onToggle} size={22} />}
@@ -213,7 +213,79 @@ export function TodayCard({ day, status = {}, onToggle, onOpen, compact }) {
 
 // ---------- Weekly calendar (the core) ----------
 
-function DayColumn({ day, status, onOpen, onToggle, selected, onSelect }) {
+// Drag a session onto another day of the week. Pointer events so mouse and touch share one path:
+// a mouse drag starts after a few px of movement, touch after a long-press (so plain swipes still scroll).
+const LONG_PRESS = 350, SLOP = 6;
+const dropDayAt = (x, y) => { const el = document.elementFromPoint(x, y)?.closest('[data-drop-day]'); return el ? +el.dataset.dropDay : null; };
+const swallowNextClick = () => {
+  const stop = (e) => { e.stopPropagation(); e.preventDefault(); };
+  window.addEventListener('click', stop, { capture: true, once: true });
+  setTimeout(() => window.removeEventListener('click', stop, true), 0);
+};
+
+function useDayDrag(days, onMove) {
+  const [drag, setDrag] = useState(null); // { s, from, x, y, over }
+  const live = useRef(null);
+  useEffect(() => () => live.current?.end(), []);
+  const bind = (s, from) => (!onMove || s.synthetic ? {} : {
+    'data-draggable': '',
+    onPointerDown: (e) => {
+      if (e.button !== 0 || live.current) return;
+      const id = e.pointerId, touch = e.pointerType !== 'mouse';
+      let active = false;
+      const activate = (x, y) => { active = true; navigator.vibrate?.(10); setDrag({ s, from, x, y, over: from }); };
+      const move = (ev) => {
+        if (ev.pointerId !== id) return;
+        if (!active) {
+          if (Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < SLOP) return;
+          if (touch) return end(); // moved before the long-press: it's a scroll
+          activate(ev.clientX, ev.clientY);
+        }
+        setDrag((d) => d && { ...d, x: ev.clientX, y: ev.clientY, over: dropDayAt(ev.clientX, ev.clientY) });
+      };
+      const up = (ev) => {
+        if (ev.pointerId !== id) return;
+        if (active) {
+          const to = dropDayAt(ev.clientX, ev.clientY);
+          if (to != null && to !== from) onMove(s, days[to].date);
+          swallowNextClick();
+        }
+        end();
+      };
+      const cancel = (ev) => { if (ev.pointerId === id) end(); };
+      const key = (ev) => { if (ev.key === 'Escape') { if (active) swallowNextClick(); end(); } };
+      const noScroll = (ev) => { if (active) ev.preventDefault(); };
+      const noMenu = (ev) => ev.preventDefault();
+      const timer = touch ? setTimeout(() => activate(e.clientX, e.clientY), LONG_PRESS) : null;
+      const end = () => {
+        clearTimeout(timer);
+        window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', cancel);
+        window.removeEventListener('keydown', key); window.removeEventListener('touchmove', noScroll); window.removeEventListener('contextmenu', noMenu);
+        live.current = null; setDrag(null);
+      };
+      window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', cancel);
+      window.addEventListener('keydown', key); window.addEventListener('touchmove', noScroll, { passive: false }); window.addEventListener('contextmenu', noMenu);
+      live.current = { end };
+    },
+  });
+  return { drag, bind };
+}
+
+function DragGhost({ drag, days }) {
+  if (!drag) return null;
+  const { s, from, over, x, y } = drag;
+  const target = over != null && over !== from ? days[over] : null;
+  const nearLong = target && (over === 4 || over === 5) && s.intensity >= 4;
+  return (
+    <div className={cx('k-drag-ghost', `k-tone-${TYPE_TONE[s.type]}`)} style={{ left: x, top: y }} aria-hidden="true">
+      <span className="k-drag-ghost-title"><Icon name={s.type} size={16} stroke={2} />{s.title}</span>
+      <span className="body-s k-muted">{target ? `Move to ${DAY_NAMES[over]} ${target.date.getDate()}` : 'Drop on another day'}</span>
+      {nearLong ? <span className="k-warn body-s"><Icon name="info" size={14} />Close to long run</span> : null}
+    </div>
+  );
+}
+
+function DayColumn({ day, idx, status, onOpen, onToggle, selected, onSelect, bind, drag }) {
   const { today } = useKairo();
   const isToday = sameDay(day.date, today);
   const past = daysBetween(day.date, today) > 0;
@@ -221,7 +293,7 @@ function DayColumn({ day, status, onOpen, onToggle, selected, onSelect }) {
   const runKm = day.sessions.filter((s) => s.kind === 'run').reduce((a, s) => a + s.km, 0);
   const hasKey = day.sessions.some((s) => s.key);
   return (
-    <div className={cx('k-day', isToday && 'is-today', past && 'is-past', restOnly && 'is-rest', selected && 'is-selected')} onClick={onSelect}>
+    <div className={cx('k-day', isToday && 'is-today', past && 'is-past', restOnly && 'is-rest', selected && 'is-selected', drag && drag.over === idx && drag.from !== idx && 'is-drop-over')} data-drop-day={idx} onClick={onSelect}>
       <div className="k-day-head">
         <span className="label">{DAY_NAMES[(day.date.getDay() + 6) % 7]}</span>
         <span className={cx('k-day-date', isToday && 'is-today')}>{day.date.getDate()}</span>
@@ -231,12 +303,12 @@ function DayColumn({ day, status, onOpen, onToggle, selected, onSelect }) {
         {day.sessions.map((s) => {
           const st = sessionState(s, today, status);
           if (s.kind === 'rest') return (
-            <button key={s.id} className="k-block is-rest" onClick={(e) => { e.stopPropagation(); onOpen && onOpen(s, day.date); }}>
+            <button key={s.id} {...bind(s, idx)} className={cx('k-block is-rest', drag?.s.id === s.id && 'is-drag-src')} onClick={(e) => { e.stopPropagation(); onOpen && onOpen(s, day.date); }}>
               <Icon name="rest" size={18} /><span className="k-block-title">Rest</span><span className="k-block-meta">{s.detail}</span>
             </button>
           );
           return (
-            <div key={s.id} role="button" tabIndex={0} className={cx('k-block', `k-tone-${TYPE_TONE[s.type]}`, `is-${st}`, s.kind === 'run' && 'is-run', s.key && 'is-key')}
+            <div key={s.id} {...bind(s, idx)} role="button" tabIndex={0} className={cx('k-block', `k-tone-${TYPE_TONE[s.type]}`, `is-${st}`, s.kind === 'run' && 'is-run', s.key && 'is-key', drag?.s.id === s.id && 'is-drag-src')}
               onClick={(e) => { e.stopPropagation(); onOpen && onOpen(s, day.date); }} onKeyDown={(e) => { if (e.key === 'Enter') onOpen && onOpen(s, day.date); }} aria-label={`${s.title}, ${s.detail}, ${st}`}>
               <span className="k-block-top"><Icon name={s.type} size={16} stroke={2} /><MarkToggle s={s} status={st} onToggle={onToggle} size={18} /></span>
               <span className="k-block-title">{s.title}</span>
@@ -252,7 +324,7 @@ function DayColumn({ day, status, onOpen, onToggle, selected, onSelect }) {
   );
 }
 
-function CompactWeek({ week, status, selected, onSelect }) {
+function CompactWeek({ week, status, selected, onSelect, drag }) {
   const { today } = useKairo();
   return (
     <div className="k-cweek">
@@ -264,7 +336,7 @@ function CompactWeek({ week, status, selected, onSelect }) {
         const anyMissed = real.some((s) => ['missed', 'skipped'].includes(sessionState(s, today, status)));
         const km = d.sessions.filter((s) => s.kind === 'run').reduce((a, s) => a + s.km, 0);
         return (
-          <button key={i} className={cx('k-cday', isToday && 'is-today', selected === i && 'is-selected', main.kind === 'rest' && 'is-rest')} onClick={() => onSelect(i)}>
+          <button key={i} className={cx('k-cday', isToday && 'is-today', selected === i && 'is-selected', main.kind === 'rest' && 'is-rest', drag && drag.over === i && drag.from !== i && 'is-drop-over')} data-drop-day={i} onClick={() => onSelect(i)}>
             <span className="label">{DAY_NAMES[i].slice(0, 1)}</span>
             <span className="k-cday-date">{d.date.getDate()}</span>
             <span className={cx('k-cday-icon', `k-tone-${TYPE_TONE[main.type]}`)}><Icon name={main.type} size={18} stroke={2} /></span>
@@ -277,15 +349,16 @@ function CompactWeek({ week, status, selected, onSelect }) {
   );
 }
 
-export function WeekCalendar({ week, status = {}, onOpen, onToggle, onPrev, onNext, compact, onJumpToday, showHeader = true }) {
+export function WeekCalendar({ week, status = {}, onOpen, onToggle, onMove, onPrev, onNext, compact, onJumpToday, showHeader = true }) {
   const { today, currentWeek } = useKairo();
+  const { drag, bind } = useDayDrag(week.days, onMove);
   const todayIdx = week.days.findIndex((d) => sameDay(d.date, today));
   const [sel, setSel] = useState(todayIdx >= 0 ? todayIdx : 0);
   useEffect(() => { setSel(todayIdx >= 0 ? todayIdx : 0); }, [week.wk]);
   const t = weekTotals(week, status);
   const end = week.days[6].date;
   return (
-    <section className={cx('k-week', compact && 'is-compact')}>
+    <section className={cx('k-week', compact && 'is-compact', drag && 'is-dragging')}>
       {showHeader ? (
         <header className="k-week-head">
           <div>
@@ -301,17 +374,18 @@ export function WeekCalendar({ week, status = {}, onOpen, onToggle, onPrev, onNe
       ) : null}
       {compact ? (
         <>
-          <CompactWeek week={week} status={status} selected={sel} onSelect={setSel} />
+          <CompactWeek week={week} status={status} selected={sel} onSelect={setSel} drag={drag} />
           <div className="k-cweek-detail">
-            <div className="label k-muted">{fmtDate(week.days[sel].date)}{sel === todayIdx ? ' · Today' : ''}</div>
-            {week.days[sel].sessions.map((s) => <SessionLine key={s.id} s={s} status={s.kind === 'rest' ? null : sessionState(s, today, status) === 'today' ? 'planned' : sessionState(s, today, status)} onClick={() => onOpen && onOpen(s, week.days[sel].date)} onToggle={onToggle} />)}
+            <div className="label k-muted">{fmtDate(week.days[sel].date)}{sel === todayIdx ? ' · Today' : ''}{onMove && week.days[sel].sessions.some((s) => !s.synthetic) ? ' · Hold and drag to a day to move' : ''}</div>
+            {week.days[sel].sessions.map((s) => <SessionLine key={s.id} {...bind(s, sel)} className={drag?.s.id === s.id && 'is-drag-src'} s={s} status={s.kind === 'rest' ? null : sessionState(s, today, status) === 'today' ? 'planned' : sessionState(s, today, status)} onClick={() => onOpen && onOpen(s, week.days[sel].date)} onToggle={onToggle} />)}
           </div>
         </>
       ) : (
         <div className="k-week-grid">
-          {week.days.map((d, i) => <DayColumn key={i} day={d} status={status} onOpen={onOpen} onToggle={onToggle} />)}
+          {week.days.map((d, i) => <DayColumn key={i} idx={i} day={d} status={status} onOpen={onOpen} onToggle={onToggle} bind={bind} drag={drag} />)}
         </div>
       )}
+      <DragGhost drag={drag} days={week.days} />
       <footer className="k-week-foot">
         <div className="k-week-total"><span className="metric-m k-num">{t.done}</span><span className="k-muted"> / {t.planned} km</span></div>
         <div className="k-week-bar" aria-hidden="true">
