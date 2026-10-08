@@ -17,14 +17,29 @@ function pickSession(sessions, today, id, match) {
 
 function useRestTimer() {
   const [rest, setRest] = useState(0);
+  const [total, setTotal] = useState(0);
   useEffect(() => { if (rest <= 0) return undefined; const i = setTimeout(() => setRest((r) => r - 1), 1000); return () => clearTimeout(i); }, [rest]);
-  return [rest, setRest];
+  const start = (sec) => { setTotal(sec); setRest(sec); };
+  return { rest, total, start, skip: () => setRest(0) };
 }
 const restSeconds = (txt) => { const n = parseInt(txt, 10); if (!n) return 90; return /min/.test(txt) ? n * 60 : n; };
 
+/** Mobile: countdown pinned under the top bar while resting, so it's visible without scrolling. */
+function RestBar({ rest, total, onSkip }) {
+  return (
+    <div className="k-restbar" role="timer" aria-live="off">
+      <Icon name="test" size={20} />
+      <span className="k-restbar-label body-s">Recovering</span>
+      <span className="metric-m k-num">{fmtClock(Math.max(0, rest))}</span>
+      <Button variant="ghost" size="sm" onClick={onSkip}>Skip</Button>
+      <i className="k-restbar-fill" style={{ width: (total ? (rest / total) * 100 : 0) + '%' }} />
+    </div>
+  );
+}
+
 export default function Strength() {
   const { sessions, strengthLogs, status, today, actions } = useKairo();
-  const { back } = useShell();
+  const { back, layout } = useShell();
   const [params, setParams] = useSearchParams();
   const fromId = params.get('session');
   const pickedId = useMemo(() => pickSession(sessions, today, fromId, (s) => s.type === 'upper' || s.type === 'strength')?.id, [fromId, sessions.length]);
@@ -33,7 +48,8 @@ export default function Strength() {
   useEffect(() => { if (initial?.session) setK(initial.session); }, [initial?.id]);
   const target = initial && initial.session === k ? initial : pickSession(sessions, today, null, (s) => s.session === k);
   const S = STRENGTH[k];
-  const [rest, setRest] = useRestTimer();
+  const { rest, total: restTotal, start: startRest, skip: skipRest } = useRestTimer();
+  const mobile = layout === 'mobile';
 
   const logFor = (ex) => strengthLogs.find((l) => l.session_id === target?.id && l.exercise === ex);
   const lastWeight = (ex) => strengthLogs.find((l) => l.exercise === ex && l.weight_kg != null && l.session_id !== target?.id)?.weight_kg;
@@ -51,6 +67,7 @@ export default function Strength() {
       </div>
       {!target ? <Empty icon="strength" title="No session of this type in the plan" /> : (
         <div className="k-detail-grid">
+          {mobile && rest > 0 ? <RestBar rest={rest} total={restTotal} onSkip={skipRest} /> : null}
           <div className="k-detail-main">
             <Card title="Exercises" eyebrow={`${S.ex.length} movements · ~${S.min} min · RIR 1–2`} action={<span className="body-s k-muted k-num">{done}/{total} sets</span>}>
               <div className="k-exlist">
@@ -60,7 +77,7 @@ export default function Strength() {
                     <ExerciseRow key={k + i} index={i + 1} name={e[0]} sets={e[1]} reps={e[2]} rest={e[4]}
                       weight={log?.weight_kg ?? lastWeight(e[0]) ?? (e[3] || '')} done={log?.sets_done || 0}
                       onWeight={(w) => actions.saveStrength(target.id, e[0], { weight_kg: w === '' ? null : +w })}
-                      onSet={(n) => { actions.saveStrength(target.id, e[0], { sets_done: n, weight_kg: log?.weight_kg ?? lastWeight(e[0]) ?? (e[3] || null) }); if (n > (log?.sets_done || 0)) setRest(restSeconds(e[4])); }} />
+                      onSet={(n) => { actions.saveStrength(target.id, e[0], { sets_done: n, weight_kg: log?.weight_kg ?? lastWeight(e[0]) ?? (e[3] || null) }); if (n > (log?.sets_done || 0)) startRest(restSeconds(e[4])); }} />
                   );
                 })}
               </div>
@@ -69,9 +86,11 @@ export default function Strength() {
           </div>
           <aside className="k-detail-side">
             <SessionActions s={target} toggle={<DoneToggle done={status[target.id] === 'done'} onChange={(v) => actions.toggleDone(target, v)} label={['Mark session as done', 'Session done · tap to undo']} />} />
-            <Card eyebrow="Rest timer" title={rest > 0 ? 'Recovering' : 'Ready for next set'}>
-              <div className="k-rest"><span className="metric-xl k-num">{fmtClock(Math.max(0, rest))}</span><Button variant="ghost" size="sm" onClick={() => setRest(0)}>Skip</Button></div>
-            </Card>
+            {!mobile ? (
+              <Card eyebrow="Rest timer" title={rest > 0 ? 'Recovering' : 'Ready for next set'}>
+                <div className="k-rest"><span className="metric-xl k-num">{fmtClock(Math.max(0, rest))}</span><Button variant="ghost" size="sm" onClick={skipRest}>Skip</Button></div>
+              </Card>
+            ) : null}
             <Card eyebrow="Rules" title="Keep it running-friendly">
               <ul className="k-list body-s"><li>Lower day = Tuesday, same day as the quality run.</li><li>≥ 48 h between heavy legs and the long run.</li><li>Cutback weeks: drop one set, keep the load.</li></ul>
             </Card>

@@ -480,6 +480,12 @@ button { font: inherit; color: inherit; }
 .k-ex-sets button { width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1.5px solid var(--line-strong); background: var(--surface); font-size: 13px; font-weight: 700; color: var(--ink-2); cursor: pointer; display: grid; place-items: center; }
 .k-ex-sets button.on { background: var(--status-good); border-color: var(--status-good); color: var(--on-status); }
 .k-rest { display: flex; align-items: center; justify-content: space-between; }
+/* mobile rest bar: sticks under .k-mtop (12px padding ×2 + 34px avatar + 1px border = 59px) */
+.k-restbar { position: sticky; top: 59px; z-index: 4; display: flex; align-items: center; gap: 10px; margin: 0 calc(-1 * var(--space-4)); padding: 10px var(--space-4) 13px; background: var(--surface); border-bottom: 1px solid var(--line); box-shadow: 0 6px 16px rgba(0,0,0,0.08); color: var(--ink); overflow: hidden; animation: k-restbar-in 180ms ease-out; }
+.k-restbar-label { flex: 1; color: var(--ink-2); font-weight: 600; }
+.k-restbar-fill { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); transition: width 1s linear; }
+@keyframes k-restbar-in { from { transform: translateY(-100%); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .k-restbar { animation: none; } .k-restbar-fill { transition: none; } }
 .k-whygrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
 .k-prog { display: flex; flex-direction: column; gap: 8px; }
 .k-prog-row { display: grid; grid-template-columns: 64px 1fr 36px; gap: 8px; align-items: center; }
