@@ -68,7 +68,7 @@ export function AppStateProvider({ children }) {
 
   const actions = {
     toast, reload,
-    toggleDone: (s, v) => { if (s.synthetic) return; updateSession(s, { status: v ? 'done' : 'planned', completed_at: v ? new Date().toISOString() : null }, v ? `${s.title} marked done` : `${s.title} set back to not done`); },
+    toggleDone: (s, v) => { if (s.synthetic) return; updateSession(s, { status: v ? 'done' : 'planned', completed_at: v ? new Date().toISOString() : null }, v ? { msg: `${s.title} marked done`, share: s.id } : `${s.title} set back to not done`); },
     skip: (s, v) => updateSession(s, { status: v ? 'skipped' : 'planned' }, v ? 'Skipped — no stress, the plan absorbs it' : 'Restored'),
     move: (s, date) => updateSession(s, { date: toISO(date), moved: true }, 'Workout moved — calendar updated'),
     saveSession: (s, patch, msg) => updateSession(s, patch, msg),
@@ -76,6 +76,12 @@ export function AppStateProvider({ children }) {
       const before = data.profile;
       setData((d) => ({ ...d, profile: { ...(d.profile || { id: userId }), ...patch } }));
       await guard(() => db.updateProfile(userId, patch), () => setData((d) => ({ ...d, profile: before })), msg);
+    },
+    // Last-used share card format / style / toggles. Best effort: a failed save never interrupts sharing.
+    saveSharePrefs: async (prefs) => {
+      if (JSON.stringify(data.profile?.share_prefs) === JSON.stringify(prefs)) return;
+      setData((d) => ({ ...d, profile: { ...(d.profile || { id: userId }), share_prefs: prefs } }));
+      try { await db.updateProfile(userId, { share_prefs: prefs }); } catch (e) { console.warn('Share preferences not saved', e); }
     },
     saveRecovery: async (row) => {
       try {

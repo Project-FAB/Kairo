@@ -156,14 +156,15 @@ export function SessionLine({ s, status, onClick, onToggle, className, ...rest }
   );
 }
 
-export function TodayCard({ day, status = {}, onToggle, onOpen, compact }) {
+export function TodayCard({ day, status = {}, onToggle, onOpen, onShare, compact }) {
   const runs = day.sessions.filter((s) => s.kind === 'run');
   const main = runs[0] || day.sessions.find((s) => s.kind !== 'rest') || day.sessions[0];
   const others = day.sessions.filter((s) => s !== main);
+  const share = (s) => (onShare ? <Button variant="icon" icon="share" onClick={() => onShare(s)} aria-label="Share today" title="Share today" /> : null);
   if (!main || main.kind === 'rest') {
     return (
       <section className="k-today is-rest">
-        <div className="k-today-head"><span className="label k-eyebrow">Today · {fmtDate(day.date)}</span><TypeTag type="rest">Rest day</TypeTag></div>
+        <div className="k-today-head"><span className="label k-eyebrow">Today · {fmtDate(day.date)}</span><span className="k-today-tags"><TypeTag type="rest">Rest day</TypeTag>{share(null)}</span></div>
         <h2 className="display-l">Rest day</h2>
         <p className="body k-muted">Your body adapts while you recover.</p>
         <div className="k-today-recs">
@@ -179,7 +180,7 @@ export function TodayCard({ day, status = {}, onToggle, onOpen, compact }) {
     <section className={cx('k-today', done && 'is-done')}>
       <div className="k-today-head">
         <span className="label k-eyebrow">Today · {fmtDate(day.date)}</span>
-        <TypeTag type={main.type} />
+        <span className="k-today-tags"><TypeTag type={main.type} />{share(main)}</span>
       </div>
       <div className="k-today-title">
         <div>
@@ -669,15 +670,19 @@ export function ExerciseRow({ name, sets, reps, weight, rest, done = 0, onSet, o
   );
 }
 
-export function Toast({ children, onDone }) {
-  useEffect(() => { const t = setTimeout(() => onDone && onDone(), 2600); return () => clearTimeout(t); }, [children]);
-  return <div className="k-toast" role="status"><Icon name="check" size={16} stroke={2.4} />{children}</div>;
+export function Toast({ children, action, onDone }) {
+  useEffect(() => { const t = setTimeout(() => onDone && onDone(), action ? 5000 : 2600); return () => clearTimeout(t); }, [children]);
+  return (
+    <div className="k-toast" role="status"><Icon name="check" size={16} stroke={2.4} />{children}
+      {action ? <button type="button" className="k-toast-act" onClick={() => { action.onClick(); onDone && onDone(); }}>{action.icon ? <Icon name={action.icon} size={15} stroke={2.2} /> : null}{action.label}</button> : null}
+    </div>
+  );
 }
 
-export function Sheet({ title, children, onClose }) {
+export function Sheet({ title, children, onClose, className }) {
   return (
     <div className="k-sheet-wrap" onClick={onClose}>
-      <div className="k-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={title}>
+      <div className={cx('k-sheet', className)} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={title}>
         <header className="k-sheet-head"><h3 className="title-m">{title}</h3><Button variant="icon" icon="x" onClick={onClose} aria-label="Close" /></header>
         {children}
       </div>

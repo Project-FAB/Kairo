@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { Suspense, createContext, lazy, useContext, useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from './icons.jsx';
 import { Toast, cx } from './ui.jsx';
 import { useKairo } from '../state/AppState.jsx';
 import { daysBetween } from '../lib/dates.js';
+const ShareSheet = lazy(() => import('./ShareSheet.jsx'));
 
 export const PRIMARY = [['/', 'Home', 'home'], ['/calendar', 'Calendar', 'calendar'], ['/workouts', 'Workouts', 'workouts'], ['/progress', 'Progress', 'progress'], ['/profile', 'Profile', 'profile']];
 export const SECONDARY = [['/plan', 'Training plan', 'plan'], ['/strength', 'Strength', 'strength'], ['/plyo', 'Plyometrics', 'plyo'], ['/recovery', 'Recovery', 'heart'], ['/race', 'Race countdown', 'flag']];
@@ -69,6 +70,7 @@ export default function Shell() {
   const layout = width >= 1180 ? 'desktop' : width >= 760 ? 'tablet' : 'mobile';
   const { currentWeek, toastMsg, clearToast, isDemo, user } = useKairo();
   const [weekNo, setWeekNoRaw] = useState(currentWeek ?? 0);
+  const [sharing, setSharing] = useState(null); // { id } of the session to share; id null = today's main session
   const navigate = useNavigate();
   const loc = useLocation();
   useEffect(() => { if (mainRef.current) mainRef.current.scrollTop = 0; }, [loc.pathname]);
@@ -80,6 +82,7 @@ export default function Shell() {
     go: (to) => navigate(to),
     back: () => (window.history.length > 1 ? navigate(-1) : navigate('/')),
     openSession: (s) => navigate(`/workout/${s.id}`),
+    share: (s) => setSharing({ id: s && !s.synthetic ? s.id : null }),
   };
   return (
     <ShellCtx.Provider value={shell}>
@@ -94,7 +97,8 @@ export default function Shell() {
           <div className="k-main-inner"><Outlet /></div>
         </main>
         {layout === 'mobile' ? <BottomNav /> : null}
-        {toastMsg ? <Toast onDone={clearToast}>{toastMsg}</Toast> : null}
+        {toastMsg ? <Toast onDone={clearToast} action={toastMsg.share ? { label: 'Share', icon: 'share', onClick: () => setSharing({ id: toastMsg.share }) } : null}>{toastMsg.msg ?? toastMsg}</Toast> : null}
+        {sharing ? <Suspense fallback={null}><ShareSheet sessionId={sharing.id} onClose={() => setSharing(null)} /></Suspense> : null}
       </div>
     </ShellCtx.Provider>
   );

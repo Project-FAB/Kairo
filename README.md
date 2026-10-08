@@ -21,7 +21,7 @@ Without Supabase keys the app runs in **demo mode**: it signs in a local user an
 ## 1. Supabase
 
 1. Create a project at <https://supabase.com> (the free tier is fine).
-2. **SQL Editor → New query**: paste `supabase/migrations/20261007000000_init.sql` and run it. This creates the tables, the `updated_at` triggers, the profile-on-signup trigger, and Row Level Security so every row is private to its owner.
+2. **SQL Editor → New query**: paste each file in `supabase/migrations/` in order and run it: `20261007000000_init.sql`, then `20261009000000_share_prefs.sql`. The first creates the tables, the `updated_at` triggers, the profile-on-signup trigger, and Row Level Security so every row is private to its owner.
    - With the Supabase CLI you can instead run `supabase link --project-ref <ref>` and then `supabase db push`.
 3. **Authentication → Providers → Email**: keep it enabled. "Confirm email" can stay on; new users get a confirmation link.
 4. **Authentication → URL Configuration**:
@@ -57,7 +57,8 @@ The anon key is meant to be public. Row Level Security is what protects the data
 ## Project structure
 
 ```
-supabase/migrations/…_init.sql   schema + RLS
+supabase/migrations/…_init.sql   schema + RLS (…_share_prefs.sql adds profiles.share_prefs)
+src/lib/share.js                 "Share today" card data + PNG export (html-to-image, Web Share API)
 src/lib/plan.js                  Tokyo 2027 template → session rows (generateSessions)
 src/lib/model.js                 rows → weeks/days, status, recovery verdict, readiness, analytics
 src/lib/db.js                    Supabase client + localStorage demo backend (same interface)

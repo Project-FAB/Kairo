@@ -35,7 +35,7 @@ export function trainingLoad(sessions, today) {
 
 export default function Dashboard() {
   const { weeks, status, today, currentWeek, race, profile, recovery, readiness, sessions, actions } = useKairo();
-  const { layout, weekNo, setWeekNo, go, openSession } = useShell();
+  const { layout, weekNo, setWeekNo, go, openSession, share } = useShell();
   const week = weeks[currentWeek];
   const todayDay = weeks.flatMap((w) => w.days).find((d) => sameDay(d.date, today));
   const prev = weeks[currentWeek - 1];
@@ -56,7 +56,7 @@ export default function Dashboard() {
     </header>
   );
   const todayCard = todayDay
-    ? <TodayCard day={todayDay} status={status} onToggle={actions.toggleDone} onOpen={openSession} compact={layout === 'mobile'} />
+    ? <TodayCard day={todayDay} status={status} onToggle={actions.toggleDone} onOpen={openSession} onShare={share} compact={layout === 'mobile'} />
     : (
       <section className="k-today is-rest">
         <div className="k-today-head"><span className="label k-eyebrow">Today · {fmtDate(today)}</span></div>

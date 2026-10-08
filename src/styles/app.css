@@ -172,6 +172,7 @@ button { font: inherit; color: inherit; }
 .k-today.is-done::before { background: var(--status-good); }
 .k-today-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
 .k-today-head .k-eyebrow { color: var(--accent-ink); margin: 0; }
+.k-today-tags { display: inline-flex; align-items: center; gap: var(--space-2); }
 .k-today.is-rest .k-today-head .k-eyebrow { color: var(--ink-3); }
 .k-today-title { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); }
 .k-today-dist { display: flex; align-items: baseline; margin-top: 6px; }
@@ -431,6 +432,8 @@ button { font: inherit; color: inherit; }
 .k-warn { display: inline-flex; gap: 4px; align-items: center; color: var(--status-caution-ink); margin-left: auto; font-weight: 600; }
 .k-toast { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: var(--radius-pill); background: var(--brand); color: var(--on-brand); font-size: 14px; font-weight: 600; box-shadow: var(--shadow-raised); white-space: nowrap; }
 .k-app.is-mobile .k-toast { bottom: 96px; }
+.k-toast-act { display: inline-flex; align-items: center; gap: 5px; margin: -6px -10px -6px 6px; height: 32px; padding: 0 12px; border: 0; border-radius: var(--radius-pill); background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 650; cursor: pointer; }
+.k-toast-act:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 
 

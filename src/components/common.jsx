@@ -56,6 +56,7 @@ export function KeyWorkouts({ n = 4 }) {
 /** Done toggle + Reschedule + Skip for any real session, with the "move to another day" sheet. */
 export function SessionActions({ s, toggle, hint = 'Keep 48 h between hard leg days and the long run.' }) {
   const { weeks, status, today, actions } = useKairo();
+  const { share } = useShell();
   const [sheet, setSheet] = useState(false);
   const found = s && !s.synthetic ? findSession(weeks, s.id) : null;
   if (!found) return toggle || null;
@@ -66,6 +67,7 @@ export function SessionActions({ s, toggle, hint = 'Keep 48 h between hard leg d
     <>
       <div className="k-actions">
         {toggle}
+        {st === 'done' ? <Button variant="primary" icon="share" onClick={() => share(s)}>Share</Button> : null}
         <Button variant="secondary" icon="move" onClick={() => setSheet(true)}>Reschedule</Button>
         {!isRest ? <Button variant="ghost" icon="skip" onClick={() => actions.skip(s, st !== 'skipped')}>{st === 'skipped' ? 'Restore' : 'Skip workout'}</Button> : null}
       </div>

@@ -51,6 +51,10 @@ const P = {
   arrowR: <><path d="M4 12h15M13 6l6 6-6 6" /></>,
   info: <><circle cx="12" cy="12" r="8.5" /><path d="M12 11v5M12 8h0.01" /></>,
   link: <><path d="M10 14l4-4" /><path d="M8.5 11.5l-2 2a3 3 0 0 0 4 4l2-2M15.5 12.5l2-2a3 3 0 0 0-4-4l-2 2" /></>,
+  share: <><path d="M12 3.5v11" /><path d="M7.5 8L12 3.5 16.5 8" /><path d="M5 12.5V18a2.5 2.5 0 0 0 2.5 2.5h9A2.5 2.5 0 0 0 19 18v-5.5" /></>,
+  download: <><path d="M12 4v11" /><path d="M7.5 10.5L12 15l4.5-4.5" /><path d="M5 20h14" /></>,
+  copy: <><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.5" /><path d="M15.5 8.5V6.5A2.5 2.5 0 0 0 13 4H6.5A2.5 2.5 0 0 0 4 6.5V13a2.5 2.5 0 0 0 2.5 2.5h2" /></>,
+  image: <><rect x="3.5" y="4.5" width="17" height="15" rx="3" /><circle cx="9" cy="10" r="1.6" /><path d="M20.5 15.5l-5-5-8.5 9" /></>,
 };
 
 export function Icon({ name, size = 20, stroke = 1.75, className, style, title }) {

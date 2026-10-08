@@ -1,0 +1,216 @@
+/* ---------- Share today: cards (authored at 270 px wide, exported ×4) ----------
+   Cards carry their own palette (--c-*) so the image never follows the app's light/dark theme. */
+.ks-card {
+  --c-bg: #0a0a0a; --c-surface: #141414; --c-surface-3: #2a2a2a; --c-line: #262626; --c-line-strong: #616161;
+  --c-ink: #f8fafc; --c-ink-2: #a3a3a3; --c-accent: #b8f23a; --c-on-accent: #0a0a0a; --c-good: #22c55e; --c-strong: #e5e5e5;
+  --hs: 1; /* hero scale per format */
+  width: 270px; height: 480px; padding: 22px 20px; display: flex; flex-direction: column; position: relative; overflow: hidden; flex: none;
+  font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--c-ink); background: var(--c-bg); text-align: left;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
+}
+.ks-card > * { position: relative; }
+.ks-card.ks-f-post { --hs: 0.8; padding: 18px 18px; }
+.ks-card.ks-f-square { --hs: 0.62; padding: 16px 16px; }
+.ks-f-post .ks-tall, .ks-f-square .ks-tall, .ks-f-square .ks-tall2 { display: none !important; }
+
+.ks-st-lime { --c-bg: #b8f23a; --c-surface: rgba(10,10,10,.08); --c-surface-3: rgba(10,10,10,.18); --c-line: rgba(10,10,10,.14); --c-line-strong: rgba(10,10,10,.4); --c-ink: #0a0a0a; --c-ink-2: rgba(10,10,10,.72); --c-good: #0a0a0a; --c-accent: #0a0a0a; --c-on-accent: #b8f23a; --c-strong: #0a0a0a; }
+.ks-st-light { --c-bg: #f8fafc; --c-surface: #ffffff; --c-surface-3: #e2e8f0; --c-line: #e2e8f0; --c-line-strong: #8491a4; --c-ink: #111827; --c-ink-2: #64748b; --c-good: #15803d; --c-accent: #0a0a0a; --c-on-accent: #b8f23a; --c-strong: #111827; }
+.ks-st-photo { --c-bg: #2f3a31; --c-surface: rgba(0,0,0,.32); --c-surface-3: rgba(255,255,255,.22); --c-line: rgba(255,255,255,.16); --c-line-strong: rgba(255,255,255,.5); --c-ink: #ffffff; --c-ink-2: rgba(255,255,255,.78); --c-strong: #ffffff; }
+.ks-st-photo:not(:has(.ks-photo-img)) { background: repeating-linear-gradient(135deg, #3a4a3a 0 14px, #34443a 14px 28px); }
+.ks-card > .ks-photo-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ks-card > .ks-photo-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,.1) 30%, rgba(0,0,0,.1) 50%, rgba(0,0,0,.6) 100%); }
+.ks-card > .ks-photo-hint { position: absolute; top: 42%; left: 0; right: 0; text-align: center; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+.ks-photo.ks-st-photo .ks-photo-shade { background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 100%); }
+
+/* shared bits */
+.ks-head { display: flex; align-items: center; gap: 8px; min-height: 16px; }
+.ks-label { margin-left: auto; font-size: 9.5px; line-height: 12px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--c-ink-2); white-space: nowrap; }
+.ks-name { font-size: 10.5px; font-weight: 650; color: var(--c-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+.ks-brand { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 800; font-size: 13px; line-height: 14px; font-stretch: 90%; color: var(--c-ink); }
+.ks-mark { display: inline-flex; align-items: flex-end; gap: 2px; height: 13px; }
+.ks-mark i { width: 4px; border-radius: 2px; background: currentColor; }
+.ks-mark i:nth-child(1) { height: 6px; } .ks-mark i:nth-child(2) { height: 9px; } .ks-mark i:nth-child(3) { height: 13px; background: #b8f23a; }
+.ks-st-lime .ks-mark i:nth-child(3), .ks-st-light .ks-mark i:nth-child(3) { background: currentColor; }
+.ks-foot { margin-top: auto; padding-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 10px; line-height: 13px; color: var(--c-ink-2); }
+.ks-sub { font-size: 11px; line-height: 15px; color: var(--c-ink-2); }
+.ks-clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ks-h3 { font-family: var(--font-display); font-stretch: 88%; font-weight: 800; font-size: calc(26px * var(--hs)); line-height: 1.08; margin: 14px 0 0; letter-spacing: -0.01em; }
+.ks-tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; font-size: 10px; line-height: 13px; font-weight: 650; align-self: flex-start; margin-top: 6px; }
+.ks-hero { font-family: var(--font-display); font-weight: 900; letter-spacing: -0.03em; }
+.ks-hero small { letter-spacing: 0; }
+.ks-stats { display: grid; gap: 6px; }
+.ks-gap-s { margin-top: 12px; } .ks-gap-m { margin-top: 16px; } .ks-gap-l { margin-top: 18px; }
+.ks-f-square .ks-gap-l, .ks-f-post .ks-gap-l { margin-top: 10px; }
+.ks-l { font-size: 8.5px; line-height: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--c-ink-2); font-weight: 650; }
+.ks-v { font-family: var(--font-display); font-weight: 750; font-size: 18px; line-height: 22px; font-stretch: 88%; white-space: nowrap; }
+.ks-v small { font-size: 10px; color: var(--c-ink-2); font-weight: 600; margin-left: 1px; }
+.ks-ck { width: 13px; height: 13px; border-radius: 50%; background: var(--c-good); color: var(--c-bg); display: inline-grid; place-items: center; font-style: normal; }
+.ks-notes { margin: 10px 0 0; font-size: 11px; line-height: 15px; color: var(--c-ink-2); font-style: italic; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* 1. Session */
+.ks-session-km { font-stretch: 84%; font-weight: 800; font-size: calc(92px * var(--hs)); line-height: .86; margin: calc(14px * var(--hs)) 0 2px; white-space: nowrap; }
+.ks-session-km small { font-size: calc(22px * var(--hs)); color: var(--c-ink-2); margin-left: 4px; font-weight: 800; }
+.ks-done { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 650; color: var(--c-good); margin-top: 6px; }
+.ks-strip { display: flex; gap: 3px; margin: 16px 0 8px; }
+.ks-strip span { flex: 1; height: 6px; border-radius: 3px; background: var(--c-surface-3); }
+.ks-countline { font-size: 11px; line-height: 15px; color: var(--c-ink-2); margin-top: 4px; }
+.ks-countline b { color: var(--c-accent); font-family: var(--font-display); font-size: 15px; }
+
+/* 2. Stats grid */
+.ks-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 14px; }
+.ks-t { border-radius: 12px; padding: 12px 10px 10px; background: var(--c-surface); border: 1px solid var(--c-line); display: flex; flex-direction: column; gap: 2px; min-height: calc(92px * var(--hs)); }
+.ks-t.is-hero { grid-column: 1 / -1; color: #0a0a0a; border: 0; min-height: calc(130px * var(--hs)); }
+.ks-t.is-hero .ks-l { color: rgba(10,10,10,.7); }
+.ks-t .ks-v { font-weight: 850; font-stretch: 84%; font-size: calc(30px * var(--hs)); line-height: 1; margin-top: auto; letter-spacing: -0.02em; }
+.ks-t.is-hero .ks-v { font-size: calc(66px * var(--hs)); }
+.ks-t .ks-v small { font-size: 12px; opacity: .7; letter-spacing: 0; color: inherit; }
+
+/* 3. Poster */
+.ks-card.ks-poster:not(.ks-f-square) { padding: 18px 16px; }
+.ks-stack { font-family: var(--font-display); font-weight: 900; font-stretch: 70%; text-transform: uppercase; line-height: .84; letter-spacing: -0.02em; margin-top: 14px; }
+.ks-stack div { white-space: nowrap; overflow: hidden; }
+.ks-stack .is-outline { -webkit-text-stroke: 1.5px var(--c-ink); color: transparent; }
+.ks-stack .is-accent { color: var(--c-accent); }
+.ks-st-light .ks-stack .is-accent, .ks-st-lime .ks-stack .is-accent { color: var(--c-ink); }
+.ks-meta { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--c-ink-2); margin-top: 14px; display: flex; justify-content: space-between; gap: 6px; }
+
+/* 4. Intervals */
+.ks-prof { display: flex; align-items: flex-end; gap: 2px; height: calc(120px * var(--hs)); margin-top: 16px; padding-bottom: 2px; border-bottom: 1px solid var(--c-line); }
+.ks-prof i { border-radius: 3px 3px 0 0; min-width: 3px; }
+.ks-reps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 12px; }
+.ks-rep { border-radius: 8px; padding: 7px 8px; background: var(--c-surface); border: 1px solid var(--c-line); min-width: 0; }
+.ks-rep b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 15px; line-height: 19px; font-stretch: 88%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ks-rep span { display: block; font-size: 9px; line-height: 11px; color: var(--c-ink-2); font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* 5. Photo sticker */
+.ks-sticker { margin-top: auto; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+.ks-big { font-family: var(--font-display); font-weight: 900; font-stretch: 80%; font-size: calc(64px * var(--hs)); line-height: .9; letter-spacing: -0.02em; white-space: nowrap; }
+.ks-big small { font-size: 20px; }
+.ks-line { display: flex; gap: 14px; margin-top: 6px; font-family: var(--font-display); font-weight: 750; font-size: 15px; line-height: 18px; font-stretch: 88%; }
+.ks-line small, .ks-row3 small { display: block; font-family: var(--font-sans); font-size: 8px; line-height: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .8; font-weight: 700; }
+.ks-sticker-brand { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.ks-sticker .ks-brand, .ks-sticker .ks-name, .ks-stk .ks-brand, .ks-stk .ks-name { color: #fff; }
+
+/* 6. Clear sticker (transparent export) */
+.ks-clear { background: transparent; justify-content: center; align-items: center; text-align: center; color: #fff; }
+.ks-stk { display: flex; flex-direction: column; align-items: center; gap: 10px; text-shadow: 0 1px 10px rgba(0,0,0,.35); }
+.ks-stk .ks-big { font-stretch: 76%; font-size: calc(84px * var(--hs)); line-height: .86; letter-spacing: -0.03em; }
+.ks-stk .ks-big span { font-size: 24px; }
+.ks-row3 { display: flex; gap: 14px; font-family: var(--font-display); font-weight: 800; font-size: 16px; line-height: 19px; font-stretch: 88%; }
+
+/* 7. Countdown */
+.ks-count-big { font-stretch: 75%; font-size: calc(118px * var(--hs)); line-height: .82; letter-spacing: -0.04em; margin-top: calc(22px * var(--hs)); }
+.ks-unit { font-family: var(--font-display); font-weight: 800; font-size: calc(22px * var(--hs)); line-height: 1.1; font-stretch: 88%; margin-top: 8px; }
+.ks-today { margin-top: 18px; padding: 10px 12px; border-radius: 12px; background: #0a0a0a; color: #f8fafc; display: flex; align-items: center; gap: 10px; font-size: 11.5px; line-height: 15px; }
+.ks-st-black .ks-today { background: var(--c-surface); border: 1px solid var(--c-line); }
+.ks-today .ks-sub { color: #a3a3a3; font-size: 10.5px; }
+.ks-ic { width: 26px; height: 26px; flex: none; border-radius: 8px; display: grid; place-items: center; color: #0a0a0a; }
+.ks-bars { display: flex; gap: 2px; align-items: flex-end; height: 50px; margin-top: 16px; }
+.ks-bars i { flex: 1; background: var(--c-surface-3); border-radius: 2px 2px 0 0; }
+.ks-bars i.is-done { background: var(--c-ink-2); }
+.ks-bars i.is-now { background: var(--c-ink); }
+.ks-st-black .ks-bars i.is-now { background: var(--c-accent); }
+
+/* 8. Race bib (fixed look) */
+.ks-card.ks-bib { --c-bg: #f8fafc; --c-ink: #0a0a0a; --c-ink-2: #475569; padding: 0; }
+.ks-bib-top { background: #0a0a0a; color: #f8fafc; padding: 16px 18px 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ks-bib-top .ks-brand { color: #f8fafc; }
+.ks-bib-race { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ks-holes { display: flex; justify-content: space-between; padding: 10px 14px 0; }
+.ks-holes i { width: 12px; height: 12px; border-radius: 50%; background: #0a0a0a; }
+.ks-bibn { font-stretch: 72%; font-size: calc(118px * var(--hs)); line-height: .86; text-align: center; letter-spacing: -0.04em; margin-top: calc(18px * var(--hs)); }
+.ks-cap { text-align: center; font-family: var(--font-display); font-weight: 800; font-size: 18px; line-height: 22px; font-stretch: 88%; margin-top: 4px; }
+.ks-band { margin-top: calc(18px * var(--hs)); background: #b8f23a; padding: 10px 18px; font-family: var(--font-display); font-weight: 800; font-size: 14px; line-height: 17px; display: flex; justify-content: space-between; }
+.ks-bib-today { padding: 14px 18px 0; font-size: 11px; line-height: 16px; color: #334155; }
+.ks-tear { margin-top: auto; border-top: 2px dashed #94a3b8; padding: 12px 18px 16px; display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: #475569; }
+
+/* 9. Week */
+.ks-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 14px; }
+.ks-day { border-radius: 8px; background: var(--c-surface); border: 1px solid var(--c-line); padding: 6px 3px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: calc(92px * var(--hs)); }
+.ks-day.is-today { border-color: var(--c-accent); }
+.ks-d { font-size: 8px; line-height: 10px; font-weight: 700; letter-spacing: .06em; color: var(--c-ink-2); }
+.ks-sw { width: 100%; border-radius: 4px; }
+.ks-f-square .ks-sw { display: none; }
+.ks-dkm { font-family: var(--font-display); font-weight: 750; font-size: 11px; line-height: 13px; }
+.ks-dck { width: 12px; height: 12px; border-radius: 50%; background: var(--c-good); color: var(--c-bg); display: grid; place-items: center; margin-top: auto; }
+.ks-dck.is-no { background: transparent; border: 1.5px solid var(--c-line-strong); }
+.ks-dck.is-rest { background: transparent; border: 1.5px dashed var(--c-line-strong); }
+.ks-tot { margin-top: 14px; display: flex; align-items: baseline; gap: 6px; }
+.ks-tot b { font-family: var(--font-display); font-size: calc(54px * var(--hs)); line-height: .9; font-weight: 800; font-stretch: 84%; letter-spacing: -0.02em; }
+.ks-wbar { display: flex; gap: 2px; height: 8px; margin-top: 10px; }
+.ks-wbar span { border-radius: 2px; }
+.ks-next { display: block; font-size: 12px; line-height: 14px; white-space: normal; }
+.ks-next small { margin-left: 0; }
+
+/* 10. Block */
+.ks-wk { font-stretch: 80%; font-size: calc(50px * var(--hs)); white-space: nowrap; line-height: .9; margin-top: calc(18px * var(--hs)); }
+.ks-wk small { font-size: calc(22px * var(--hs)); color: var(--c-ink-2); font-weight: 750; }
+.ks-vols { display: flex; gap: 3px; align-items: flex-end; height: calc(170px * var(--hs)); margin-top: 18px; }
+.ks-vols i { flex: 1; border-radius: 3px 3px 0 0; background: var(--c-surface-3); }
+.ks-vols i.is-done { background: var(--c-strong); }
+.ks-vols i.is-now { background: var(--c-accent); }
+.ks-ph { display: flex; gap: 3px; margin-top: 6px; }
+.ks-ph span { font-size: 7.5px; line-height: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--c-ink-2); padding: 3px 2px; border-radius: 4px; background: var(--c-surface); text-align: center; overflow: hidden; white-space: nowrap; }
+.ks-ph span.is-now { background: var(--c-accent); color: var(--c-on-accent); }
+
+/* 11. Consistency */
+.ks-streak-big { font-stretch: 76%; font-size: calc(110px * var(--hs)); line-height: .84; margin-top: calc(16px * var(--hs)); color: var(--c-accent); }
+.ks-st-light .ks-streak-big, .ks-st-lime .ks-streak-big { color: var(--c-ink); }
+.ks-dh { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 12px; font-size: 8px; line-height: 10px; font-weight: 700; color: var(--c-ink-2); text-align: center; }
+.ks-dots { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 6px; }
+.ks-dots i { aspect-ratio: 1; border-radius: 6px; background: var(--c-surface-3); }
+.ks-f-square .ks-dots { gap: 3px; } .ks-f-square .ks-dots i { aspect-ratio: auto; height: 14px; }
+.ks-dots i.is-d { background: var(--c-good); }
+.ks-dots i.is-r { background: transparent; border: 1.5px dashed var(--c-line-strong); }
+.ks-dots i.is-t { background: var(--c-accent); }
+.ks-dots i.is-m { background: var(--c-surface-3); }
+.ks-dots i.is-f { background: transparent; border: 1px solid var(--c-line); }
+
+/* 12. Monthly recap */
+.ks-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-top: 12px; }
+.ks-cal i { aspect-ratio: 1; border-radius: 4px; background: var(--c-surface); border: 1px solid var(--c-line); position: relative; }
+.ks-cal i.is-empty { visibility: hidden; }
+.ks-cal i b { position: absolute; inset: 22%; border-radius: 50%; }
+.ks-f-square .ks-cal { gap: 2px; } .ks-f-square .ks-cal i { aspect-ratio: auto; height: 17px; }
+
+/* 13. Milestone */
+.ks-kicker { margin-top: calc(22px * var(--hs)); display: inline-flex; align-items: center; gap: 6px; font-size: 10px; line-height: 13px; letter-spacing: .1em; text-transform: uppercase; font-weight: 800; color: var(--c-on-accent); background: var(--c-accent); padding: 4px 9px; border-radius: 999px; align-self: flex-start; }
+.ks-mile-h { font-family: var(--font-display); font-weight: 900; font-stretch: 78%; font-size: calc(40px * var(--hs)); line-height: .92; margin: 16px 0 0; letter-spacing: -0.02em; }
+.ks-vs { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+.ks-vr { display: grid; grid-template-columns: 54px 1fr 32px; gap: 8px; align-items: center; font-size: 10px; line-height: 13px; color: var(--c-ink-2); font-weight: 700; }
+.ks-vr i { height: 10px; border-radius: 3px; background: var(--c-surface-3); display: block; }
+.ks-vr.is-now { color: var(--c-ink); }
+.ks-vr.is-now i { background: #8b5cf6; }
+.ks-vr span:last-child { text-align: right; }
+
+/* ---------- the share sheet ---------- */
+.k-sheet.ks-sheet { width: min(880px, 100%); gap: var(--space-4); }
+.ks-body { display: grid; gap: var(--space-4); }
+.k-app:not(.is-mobile) .ks-body { grid-template-columns: auto minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+.ks-preview { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.ks-frame { position: relative; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-raised); flex: none; background: #0a0a0a; }
+.ks-frame > .ks-scale { transform-origin: top left; }
+.ks-frame.is-clear, .ks-thumb.is-clear { background: repeating-conic-gradient(#2a2a2a 0 25%, #1f1f1f 0 50%) 0 0 / 16px 16px; }
+.ks-frame.is-pickable { cursor: pointer; }
+.ks-cardname { font-size: 13px; color: var(--ink-2); }
+.ks-cardname b { color: var(--ink); font-weight: 650; }
+.ks-side { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.ks-thumbs { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: thin; }
+.ks-thumb { flex: none; width: 54px; height: 96px; border-radius: 10px; overflow: hidden; border: 2px solid transparent; position: relative; padding: 0; cursor: pointer; background: #0a0a0a; }
+.ks-thumb.on { border-color: var(--accent); }
+.ks-thumb:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ks-thumb > .ks-scale { transform: scale(.2); transform-origin: top left; pointer-events: none; }
+.ks-thumb-groups { display: flex; flex-direction: column; gap: 4px; }
+.ks-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.ks-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ks-chip { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 11px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; border: 1px solid var(--line-strong); color: var(--ink-2); background: transparent; cursor: pointer; font-family: inherit; }
+.ks-chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.ks-chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ks-actions { position: sticky; bottom: calc(-1 * var(--space-5)); margin: 0 calc(-1 * var(--space-5)) calc(-1 * var(--space-5)); padding: var(--space-3) var(--space-5) var(--space-5); background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto auto; gap: 8px; }
+.ks-actions .k-btn-primary { justify-content: center; }
+.ks-file { display: none; }
+.ks-hint { font-size: 12px; line-height: 16px; color: var(--ink-2); }
+.ks-actions .k-btn-icon { width: 48px; height: 48px; }
+.k-app:not(.is-mobile) .ks-thumbs { flex-wrap: wrap; overflow: visible; }
+.ks-st-lime .ks-tag, .ks-st-light .ks-tag { color: var(--c-ink) !important; }
+.ks-f-post .ks-cal i { aspect-ratio: auto; height: 22px; }
